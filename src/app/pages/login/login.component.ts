@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import Swal from 'sweetalert2';
 import { UsuarioModel } from '../../models/usuario.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,16 +11,49 @@ import { UsuarioModel } from '../../models/usuario.model';
 })
 export class LoginComponent implements OnInit {
   usuario: UsuarioModel = new UsuarioModel();
-  constructor() { }
+  recuerdame = false;
+  constructor( private auth: AuthService) { }
 
-  ngOnInit() { 
+  ngOnInit() {
+
+    if(localStorage.getItem('email')){
+      this.usuario.email = localStorage.getItem('email');
+      this.recuerdame = true;
+    }
   }
 
   login ( form : NgForm){
 
     if(form.invalid){return; }
-    console.log(this.usuario);
-    console.log(form);
+    
+      Swal.fire({
+          allowOutsideClick:false,
+          text: 'Espere por favor...',
+          icon: 'info'
+      });
+
+      Swal.showLoading();
+     this.auth.login(this.usuario).subscribe(resp =>{
+        console.log(resp);
+        Swal.fire({
+          allowOutsideClick:false,
+          text: 'Logueado Exitosamente',
+          icon: 'success'
+      });
+      if(Swal.fire[2]==='success'){
+         Swal.close();
+      }
+      if(this.recuerdame){
+        localStorage.setItem('email',this.usuario.email);
+      }
+     },err=>{
+       console.log(err.error.error.message);
+       Swal.fire({
+        allowOutsideClick:false,
+        text: 'Error al Ingresar',
+        icon: 'error'
+    });
+     });
   }
 
 }
