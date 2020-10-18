@@ -1,6 +1,6 @@
 {
   "name": "login-app",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -21,6 +21,7 @@
     "@angular/router": "~10.1.5",
     "core-js": "^2.5.4",
     "rxjs": "~6.3.3",
+    "sweetalert2": "^10.6.1",
     "tslib": "^2.0.0",
     "zone.js": "~0.8.26"
   },
