@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UsuarioModel } from '../models/usuario.model';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -15,13 +16,15 @@ export class AuthService {
   /* Login https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=[API_KEY] */
 
   userToken : string;
-  constructor(private http : HttpClient) {
+  constructor(private http : HttpClient,
+              private router : Router) {
 
     this.leerToken();
    }
 
   logout(){
-
+  localStorage.removeItem('token');
+  this.router.navigateByUrl('/login');
   }
 
 
@@ -31,7 +34,13 @@ export class AuthService {
       password: usuario.password,
       returnSecureToken: true
     };
-    return this.http.post(`${ this.private }accounts:signInWithPassword?key=${ this.apiKey }`,authData)
+    return this.http.post(`
+    ${ this.private }accounts:signInWithPassword?key=${ this.apiKey }`,
+    authData).pipe(map(resp =>{
+      this.guardarToken(resp['idToken']);
+      return resp;
+    })
+    );
   }
 
   nuevoUsuario(usuario: UsuarioModel){
@@ -61,5 +70,11 @@ localStorage.setItem('token',idToken);
      this.userToken = '';
    }
    return this.userToken;
+ }
+
+ estaAutenticado() : boolean{
+
+
+return this.userToken.length>2;
  }
 }

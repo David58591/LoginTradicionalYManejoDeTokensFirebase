@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { UsuarioModel } from '../../models/usuario.model';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent implements OnInit {
   usuario: UsuarioModel = new UsuarioModel();
   recuerdame = false;
-  constructor( private auth: AuthService) { }
+  constructor( private auth: AuthService, private router:Router) { }
 
   ngOnInit() {
 
@@ -25,7 +26,7 @@ export class LoginComponent implements OnInit {
   login ( form : NgForm){
 
     if(form.invalid){return; }
-    
+
       Swal.fire({
           allowOutsideClick:false,
           text: 'Espere por favor...',
@@ -40,6 +41,7 @@ export class LoginComponent implements OnInit {
           text: 'Logueado Exitosamente',
           icon: 'success'
       });
+      this.router.navigateByUrl('/home');
       if(Swal.fire[2]==='success'){
          Swal.close();
       }
